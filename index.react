@@ -1,0 +1,336 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Zap, RotateCw, CheckCircle2, XCircle, ArrowRight, BookOpen, 
+  Trophy, Settings, Activity, Info, Magnet as MagnetIcon, MoveRight
+} from 'lucide-react';
+
+const App = () => {
+  const [view, setView] = useState('menu'); 
+  const [activeChapter, setActiveChapter] = useState(0);
+  const [quizIdx, setQuizIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState(null);
+  const [rotation, setRotation] = useState(0);
+  const [isRotating, setIsRotating] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    if (isRotating) {
+      interval = setInterval(() => {
+        setRotation(prev => (prev + 10) % 360);
+      }, 35);
+    }
+    return () => clearInterval(interval);
+  }, [isRotating]);
+
+  const chapters = [
+    {
+      title: "1. Magnetismus nach Bedarf",
+      description: "Alles über Oersted und den Elektromagneten",
+      content: [
+        { label: "Entdeckung", text: "H.C. Oersted entdeckte 1820 durch Zufall den Elektromagnetismus: Eine Elektronenströmung bewirkt ein Magnetfeld rund um den Leiter." },
+        { label: "Verstärkung", text: "Wickelt man den Leiter zu einer Spule, wird das Feld verstärkt. Die Magnetpole liegen an den Enden der Spule." },
+        { label: "Faktoren", text: "Stärker durch: Höhere Windungszahl, höhere Stromstärke, Eisenkern (Holzkern bewirkt nichts!)." }
+      ],
+      quiz: [
+        {
+          q: "Was bewirkt die Elektronenströmung im Leiter?",
+          options: ["Ein Magnetfeld", "Einen Druckunterschied", "Wasserdampf"],
+          correct: 0,
+          why: "Das ist die Kernentdeckung von Oersted: Strom erzeugt Magnetismus!"
+        },
+        {
+          q: "Wie wird die Wirkung eines Elektromagneten NICHT vergrößert?",
+          options: ["Höhere Windungszahl", "Ein Eisenkern", "Ein Holzkern"],
+          correct: 2,
+          why: "Laut Arbeitsblatt 1, Aufgabe 5: Ein Holzkern hat keine magnetverstärkende Wirkung."
+        }
+      ]
+    },
+    {
+      title: "2. Spannung aus dem Magnetfeld",
+      description: "Induktion und Druckunterschiede",
+      content: [
+        { label: "Vorgang", text: "Bewegt man einen Magneten an einer Spule vorbei, ändert sich das Magnetfeld. Frei bewegliche Elektronen werden beeinflusst." },
+        { label: "Druck", text: "Es entsteht ein elektrischer Druckunterschied – wir nennen das elektrische Spannung (Induktion)." },
+        { label: "Erhöhen", text: "Spannung steigt durch: Stärkeren Magneten, mehr Windungen, schnellere Bewegung." }
+      ],
+      quiz: [
+        {
+          q: "Was entsteht durch den 'Druckunterschied' in der Spule?",
+          options: ["Ein Magnetfeld", "Elektrische Spannung", "Wärme"],
+          correct: 1,
+          why: "Arbeitsblatt 2, Aufgabe 1: Die Beeinflussung der Elektronen führt zum elektrischen Druckunterschied (Spannung)."
+        },
+        {
+          q: "Wann wird eine elektrische Spannung induziert?",
+          options: ["Wenn der Magnet stillsteht", "Wenn sich das Magnetfeld in der Spule ändert", "Wenn die Spule warm wird"],
+          correct: 1,
+          why: "Nur die Änderung (Bewegung) bewirkt Induktion (Arbeitsblatt 2, Aufgabe 4)."
+        }
+      ]
+    },
+    {
+      title: "3. Der Generator",
+      description: "Energiewandler & Wechselstrom",
+      content: [
+        { label: "Aufgabe", text: "Ein Generator wandelt mechanische Energie (Bewegung) in elektrische Energie (Strom) um." },
+        { label: "Wechselstrom", text: "Da sich der Magnet dreht, ändert die Elektronenströmung immer wieder die Richtung. Das nennt man Wechselstrom." },
+        { label: "Bauteile", text: "Beweglicher Teil = Rotor (meist Dauermagnet), unbeweglicher Teil = Stator (Spule)." }
+      ],
+      quiz: [
+        {
+          q: "Welche 3 Aussagen zum Generator sind richtig?",
+          options: [
+            "Magnetfeld ändert sich, Wechselspannung wird induziert, Dauermagnet ist beweglich",
+            "Gleichstrom entsteht, Magnet steht still, Spule ist beweglich",
+            "Generator wandelt Strom in Wärme"
+          ],
+          correct: 0,
+          why: "Genau das sind die 3 Kreuze in Aufgabe 8 auf deinem Blatt!"
+        },
+        {
+          q: "Wie nennt man die Elektronenströmung im Generator?",
+          options: ["Gleichstrom", "Magnetstrom", "Wechselstrom"],
+          correct: 2,
+          why: "Weil sich die Richtung ständig ändert (Aufgabe 9)."
+        }
+      ]
+    },
+    {
+      title: "4. Der Elektromotor",
+      description: "Strom macht Bewegung",
+      content: [
+        { label: "Funktion", text: "Elektrischer Strom in der Spule bewirkt ein Magnetfeld. Durch Anziehung und Abstoßung beginnt der Motor zu drehen." },
+        { label: "Polwender", text: "Der Polwender ändert im richtigen Moment die Richtung der Elektronenströmung und damit die Magnetpole." },
+        { label: "Bauteile", text: "Besteht aus Dauermagnet, Elektromagnet und Polwender (Aufgabe 10)." }
+      ],
+      quiz: [
+        {
+          q: "Was bewirkt die Kraft für die Drehbewegung im Motor?",
+          options: ["Anziehung und Abstoßung der Magnetpole", "Windkraft", "Ein Vakuum"],
+          correct: 0,
+          why: "Das Magnetfeld der Spule interagiert mit dem Dauermagneten (Aufgabe 8)."
+        },
+        {
+          q: "Welche Aufgabe hat der Polwender?",
+          options: ["Er speichert Strom", "Er ändert die Richtung der Elektronenströmung", "Er bremst den Motor"],
+          correct: 1,
+          why: "Damit die Drehung weitergeht, müssen die Pole gewechselt werden (Aufgabe 8)."
+        }
+      ]
+    }
+  ];
+
+  const handleAnswer = (idx) => {
+    if (feedback) return;
+    const isCorrect = idx === chapters[activeChapter].quiz[quizIdx].correct;
+    setFeedback(isCorrect ? 'correct' : 'wrong');
+    if (isCorrect) setScore(score + 1);
+  };
+
+  const nextAction = () => {
+    setFeedback(null);
+    if (quizIdx < chapters[activeChapter].quiz.length - 1) {
+      setQuizIdx(quizIdx + 1);
+    } else {
+      setView('chapter_end');
+    }
+  };
+
+  const startNextChapter = () => {
+    if (activeChapter < chapters.length - 1) {
+      setActiveChapter(activeChapter + 1);
+      setQuizIdx(0);
+      setView('explain');
+    } else {
+      setView('result');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans">
+      <div className="max-w-2xl mx-auto bg-white rounded-[2rem] shadow-2xl border-4 border-white overflow-hidden">
+        
+        {/* Header mit Fortschritt */}
+        <div className="bg-slate-900 p-6 text-white flex justify-between items-center">
+          <div>
+            <h1 className="text-xl font-black uppercase tracking-tighter">Physik-Arbeitsblatt Trainer</h1>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Magnetismus • Induktion • Generator • Motor</p>
+          </div>
+          <div className="flex gap-1">
+             {chapters.map((_, i) => <div key={i} className={`h-1 w-4 rounded-full ${i <= activeChapter ? 'bg-blue-500' : 'bg-slate-700'}`} />)}
+          </div>
+        </div>
+
+        <div className="p-6 md:p-10">
+          
+          {view === 'menu' && (
+            <div className="text-center space-y-8 animate-in zoom-in duration-300">
+              <div className="w-20 h-20 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center shadow-xl shadow-blue-200">
+                 <Zap className="text-white fill-current" size={40} />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-3xl font-black text-slate-900">Alles-Check</h2>
+                <p className="text-slate-500 max-w-sm mx-auto">Ich habe alle Aufgaben deiner 6 Arbeitsblatt-Seiten in dieses Tool gepackt.</p>
+              </div>
+              <button 
+                onClick={() => setView('explain')}
+                className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 shadow-lg"
+              >
+                JETZT LERNEN <ArrowRight />
+              </button>
+            </div>
+          )}
+
+          {view === 'explain' && (
+            <div className="space-y-6 animate-in slide-in-from-right duration-500">
+              <div className="flex items-center gap-3">
+                 <div className="bg-blue-100 p-2 rounded-lg text-blue-600 font-black">0{activeChapter + 1}</div>
+                 <h2 className="text-2xl font-black text-slate-900">{chapters[activeChapter].title}</h2>
+              </div>
+
+              {/* Illustration */}
+              <div className="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center min-h-[180px]">
+                {activeChapter === 0 && (
+                   <div className="flex flex-col items-center gap-2">
+                      <div className="flex gap-1">
+                         {[1,2,3,4].map(i => <div key={i} className="w-6 h-10 border-4 border-amber-600 rounded-md -ml-1"></div>)}
+                      </div>
+                      <p className="text-[10px] font-bold text-slate-400">SPULE VERSTÄRKT MAGNETFELD</p>
+                   </div>
+                )}
+                {activeChapter === 1 && (
+                   <div className="relative flex flex-col items-center gap-4">
+                      <div className={`transition-all duration-300 ${isRotating ? 'translate-x-8' : '-translate-x-8'}`}>
+                        <div className="flex h-6 w-16 shadow-md">
+                          <div className="flex-1 bg-red-600 rounded-l font-bold text-[8px] flex items-center justify-center text-white">N</div>
+                          <div className="flex-1 bg-blue-600 rounded-r font-bold text-[8px] flex items-center justify-center text-white">S</div>
+                        </div>
+                      </div>
+                      <button onMouseDown={() => setIsRotating(true)} onMouseUp={() => setIsRotating(false)} className="px-4 py-1.5 bg-slate-800 text-white rounded-full text-[10px] font-bold">BEWEGE MAGNET</button>
+                      {isRotating && <Zap className="absolute top-0 right-0 text-yellow-500 animate-pulse" />}
+                   </div>
+                )}
+                {activeChapter >= 2 && (
+                   <div className="flex flex-col items-center gap-4">
+                      <div className="w-20 h-6 flex transition-transform shadow-lg" style={{transform: `rotate(${rotation}deg)`}}>
+                        <div className="flex-1 bg-red-600 rounded-l text-[8px] font-bold flex items-center justify-center text-white">N</div>
+                        <div className="flex-1 bg-blue-600 rounded-r text-[8px] font-bold flex items-center justify-center text-white">S</div>
+                      </div>
+                      <button onClick={() => setIsRotating(!isRotating)} className={`px-4 py-1.5 rounded-full text-[10px] font-bold text-white ${isRotating ? 'bg-red-500' : 'bg-emerald-600'}`}>
+                        {isRotating ? 'STOPP' : 'START DREHUNG'}
+                      </button>
+                   </div>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                {chapters[activeChapter].content.map((item, i) => (
+                   <div key={i} className="flex gap-4">
+                      <span className="text-blue-600 font-black text-xs pt-1 tracking-tighter shrink-0">{item.label}:</span>
+                      <p className="text-sm text-slate-600 font-medium leading-relaxed">{item.text}</p>
+                   </div>
+                ))}
+              </div>
+
+              <button 
+                onClick={() => setView('quiz')}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black flex items-center justify-center gap-2"
+              >
+                ZUM ARBEITSBLATT-QUIZ <ArrowRight size={18} />
+              </button>
+            </div>
+          )}
+
+          {view === 'quiz' && (
+            <div className="space-y-6 animate-in slide-in-from-bottom duration-500">
+              <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                 <span>{chapters[activeChapter].title} • Frage {quizIdx + 1}/2</span>
+                 <span>Score: {score}</span>
+              </div>
+              <h2 className="text-xl font-black text-slate-800 leading-tight">
+                {chapters[activeChapter].quiz[quizIdx].q}
+              </h2>
+              <div className="space-y-3">
+                {chapters[activeChapter].quiz[quizIdx].options.map((opt, i) => {
+                  let btnStyle = "w-full p-5 rounded-2xl text-left border-2 transition-all font-bold text-sm ";
+                  if (!feedback) btnStyle += "border-slate-100 hover:border-blue-500 hover:bg-blue-50";
+                  else if (i === chapters[activeChapter].quiz[quizIdx].correct) btnStyle += "border-emerald-500 bg-emerald-50 text-emerald-800";
+                  else btnStyle += "border-red-100 opacity-50";
+
+                  return (
+                    <button key={i} onClick={() => handleAnswer(i)} disabled={!!feedback} className={btnStyle}>
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {feedback && (
+                <div className="p-5 bg-blue-50 rounded-2xl border border-blue-100 animate-in zoom-in">
+                   <div className="flex items-center gap-3 mb-2">
+                      {feedback === 'correct' ? <CheckCircle2 className="text-emerald-500" /> : <XCircle className="text-red-500" />}
+                      <span className={`font-black uppercase text-sm ${feedback === 'correct' ? 'text-emerald-600' : 'text-red-600'}`}>
+                         {feedback === 'correct' ? 'Richtig!' : 'Leider Falsch'}
+                      </span>
+                   </div>
+                   <p className="text-xs text-blue-800 leading-relaxed italic">
+                      {chapters[activeChapter].quiz[quizIdx].why}
+                   </p>
+                   <button onClick={nextAction} className="w-full mt-4 py-3 bg-blue-600 text-white rounded-xl font-black text-sm">WEITER</button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {view === 'chapter_end' && (
+            <div className="text-center py-10 space-y-6 animate-in zoom-in">
+              <div className="w-20 h-20 bg-emerald-100 rounded-full mx-auto flex items-center justify-center">
+                 <CheckCircle2 size={40} className="text-emerald-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-900">Thema fertig!</h2>
+                <p className="text-slate-500 mt-2">Du hast das Wissen von diesem Arbeitsblatt gesichert.</p>
+              </div>
+              <button onClick={startNextChapter} className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black flex items-center justify-center gap-2">
+                NÄCHSTES THEMA <ArrowRight size={20} />
+              </button>
+            </div>
+          )}
+
+          {view === 'result' && (
+            <div className="text-center py-10 space-y-8 animate-in zoom-in">
+              <Trophy size={100} className="text-yellow-400 mx-auto drop-shadow-xl" />
+              <div>
+                <h2 className="text-3xl font-black text-slate-900 tracking-tight">PHYSIK-MASTER!</h2>
+                <p className="text-slate-500 mt-2 italic">Du hast alle Fragen deiner Arbeitsblätter gelöst.</p>
+                <div className="text-5xl font-black text-blue-600 mt-6">{score} / 8</div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Punkte gesammelt</p>
+              </div>
+              <button 
+                onClick={() => {setView('menu'); setActiveChapter(0); setScore(0);}}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black shadow-lg"
+              >
+                HAUPTMENÜ
+              </button>
+            </div>
+          )}
+
+        </div>
+
+        {/* Info Box am Ende */}
+        <div className="bg-slate-50 p-6 border-t border-slate-100 flex items-center gap-4">
+           <div className="bg-white p-2 rounded-xl shadow-sm border border-slate-200 shrink-0">
+             <Info size={20} className="text-blue-500" />
+           </div>
+           <p className="text-[10px] text-slate-400 font-bold uppercase leading-tight tracking-tight">
+             Wichtig für den Test: Generator = Bewegung → Strom | Motor = Strom → Bewegung. Vergiss den Polwender nicht!
+           </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;
